@@ -1,0 +1,18 @@
+module jcselect.ui.components
+
+PartyColumn 1.0 PartyColumn.qml
+CandidateCheckbox 1.0 CandidateCheckbox.qml
+BallotTypePanel 1.0 BallotTypePanel.qml
+TallyTotals 1.0 TallyTotals.qml
+ValidationWarnings 1.0 ValidationWarnings.qml
+PenSelector 1.0 PenSelector.qml
+RefreshBadge 1.0 RefreshBadge.qml
+ExportMenu 1.0 ExportMenu.qml
+ResultsTable 1.0 ResultsTable.qml
+WinnerCard 1.0 WinnerCard.qml
+StatusIndicator 1.0 StatusIndicator.qml
+StatCard 1.0 StatCard.qml
+MetricCard 1.0 MetricCard.qml
+AdaptiveCardGrid 1.0 AdaptiveCardGrid.qml
+AppFrame 1.0 AppFrame.qml
+SvgIcon 1.0 SvgIcon.qml

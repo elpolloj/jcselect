@@ -1,0 +1,208 @@
+[tool.poetry]
+name = "jcselect"
+version = "0.1.0"
+description = "Offline-first voter tracking system for Lebanon"
+authors = ["Your Name <email@example.com>"]
+readme = "README.md"
+packages = [{include = "jcselect", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13.2"
+pyside6 = "^6.6.0"
+sqlmodel = "^0.0.14"
+sqlalchemy = "^2.0"
+pyodbc = {version = "^5.1", markers = "platform_system == 'Windows'"}
+pymssql = {version = "^2.3", markers = "platform_system != 'Windows'"}
+pydantic-settings = "^2.0.0"
+fastapi = "^0.104.0"
+uvicorn = "^0.24.0"
+alembic = "^1.12.0"
+loguru = "^0.7.2"
+tenacity = "^8.2.3"
+pydantic = "^2.5.0"
+httpx = "^0.25.0"
+cryptography = "^42.0"
+bcrypt = "^4.3.0"
+python-jose = {extras = ["cryptography"], version = "^3.5.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pandas = "^2.1.0"
+reportlab = "^4.0.0"
+arabic-reshaper = "^3.0.0"
+python-bidi = "^0.4.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-qt = "^4.2.0"
+pytest-cov = "^4.1.0"
+mypy = "^1.7.0"
+ruff = "^0.1.6"
+black = "^23.11.0"
+pre-commit = "^3.5.0"
+pyinstaller = "^6.2.0"
+faker = "^37.3.0"
+pytest-asyncio = "<1.0.0"
+pydantic = {extras = ["mypy"], version = "*"}
+psutil = "^5.9.0"
+
+[tool.poetry.scripts]
+jcselect = "jcselect.main:main"
+jcselect-admin = "jcselect.admin:main_admin"
+jcselect-operator = "jcselect.operator:main_operator"
+generate-translations = "scripts.generate_translations:main"
+dev-server = "uvicorn jcselect.api.main:app --reload --port 8000"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=src/jcselect --cov-report=xml --cov-report=term-missing --cov-fail-under=90"
+testpaths = ["tests"]
+markers = [
+    "qt: marks tests as GUI tests using Qt/QML (deselect with '-m \"not qt\"')",
+    "perf: marks tests as performance tests (slow)",
+]
+
+[tool.coverage.run]
+source = ["src/jcselect"]
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/__pycache__/*",
+    "*/migrations/*",
+    "*/alembic/versions/*",
+]
+
+[tool.coverage.report]
+# Fail if coverage falls below minimum (can be overridden with CI_COV_MIN env var)
+fail_under = 90
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.ruff]
+# Enable stricter rule set
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM", # flake8-simplify
+    "I",  # isort
+    "N",  # pep8-naming
+    "D",  # pydocstyle
+    "C90", # mccabe complexity
+    "PTH", # flake8-use-pathlib
+    "RUF", # Ruff-specific rules
+]
+
+ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in __init__
+    "D203", # 1 blank line required before class docstring (conflicts with D211)
+    "D213", # Multi-line docstring summary should start at the second line (conflicts with D212)
+    "E501", # Line too long (handled by formatter)
+    "W503", # Line break before binary operator (not PEP 8 compliant)
+    "B008", # Do not perform function calls in argument defaults
+    "RUF012", # Mutable class attributes should be annotated with ClassVar
+]
+
+# Same as Black.
+line-length = 88
+target-version = "py311"
+
+# Exclude auto-generated files and migrations
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "alembic/versions/*.py",
+    "src/jcselect/ui/components/*.qml",
+    "src/jcselect/ui/pages/*.qml",
+    "src/jcselect/ui/*.qml",
+]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["D", "PTH123"]  # Allow missing docstrings and os.path in tests
+"scripts/*" = ["D"]  # Allow missing docstrings in scripts
+"src/jcselect/models/*" = ["D101", "D102"]  # SQLModel classes don't need all docstrings
+"conftest.py" = ["D"]  # pytest configuration
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.isort]
+known-first-party = ["jcselect"]
+force-sort-within-sections = true
+
+[tool.mypy]
+python_version = "3.11"
+plugins = ["pydantic.mypy"]
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "alembic.*"
+ignore_errors = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true

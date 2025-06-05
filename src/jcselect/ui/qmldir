@@ -1,0 +1,8 @@
+module jcselect.ui
+singleton Theme 1.0 Theme.qml
+LoginWindow 1.0 LoginWindow.qml
+VoterSearchWindow 1.0 VoterSearchWindow.qml
+AdminDashboard 1.0 AdminDashboard.qml
+OperatorDashboard 1.0 OperatorDashboard.qml
+TallyCountingWindow 1.0 TallyCountingWindow.qml
+ResultsWindow 1.0 ResultsWindow.qml 

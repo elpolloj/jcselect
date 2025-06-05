@@ -1,0 +1,11 @@
+module jcselect.components
+
+SearchBar 1.0 SearchBar.qml
+VoterCard 1.0 VoterCard.qml
+VoterDetailPane 1.0 VoterDetailPane.qml
+VoteButton 1.0 VoteButton.qml
+Snackbar 1.0 Snackbar.qml
+PerformanceOverlay 1.0 PerformanceOverlay.qml
+PenPickerDialog 1.0 PenPickerDialog.qml
+CardTile 1.0 CardTile.qml
+DashboardBackground 1.0 DashboardBackground.qml 

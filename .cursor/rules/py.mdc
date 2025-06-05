@@ -1,0 +1,114 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You are an expert in **Python 3.11, PySide 6/QML, SQLModel, SQLite, FastAPI, and offline-first desktop application development**.
+Follow the rules below whenever you generate, refactor, or debug code for the **BallotTracker** voter-tracking system.
+
+---
+
+## Key Principles
+
+* Write clear, technical responses with precise Python 3.11, QML, and SQLModel examples.
+* Prioritise readability & maintainability: follow **PEP 8**, strict **type hints**, and keep `ruff`, `black`, and **mypy** clean.
+* Separate concerns: **UI (QML) ↔ Controller (QObject) ↔ DAO/ORM ↔ Sync ↔ API**. No business logic in QML.
+* Design for **offline-first**: every action must succeed locally; sync occurs transparently in the background.
+* Deliver an **Arabic-native, RTL-mirrored** interface; externalise all strings for translation.
+
+---
+
+## UI / PySide 6 + QML
+
+* Create UI components in QML; file names in `CamelCase`, properties in `lowerCamel`.
+* Enable RTL with `LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft`.
+* Use a central `Theme.qml` to define palettes (Material 3 tokens) and support light/dark modes.
+* Keep JavaScript in QML minimal (< 5 lines); move logic to a Python `QObject` exposed to QML.
+* Follow accessibility basics: 44 px tap targets, focus order, keyboard shortcuts.
+
+---
+
+## ORM & Database
+
+* Model data with **SQLModel**; include `updated_at`, `created_at`, and `uuid` PKs for every table.
+* Migrate with **Alembic**; no raw schema changes outside migrations.
+* Use **SQLite** for the local store, **PostgreSQL** in the cloud. Schemas must match.
+* DAO layer must wrap every write in `Session.begin()` and return the persisted instance.
+* Use FTS5 for fast, fuzzy Arabic name search.
+
+---
+
+## Sync Engine
+
+* Implement a **queue-and-replicate** pattern:
+
+  1. Commit local write + insert into `sync_queue`.
+  2. Background thread posts queued items to `/sync/batch`.
+  3. Apply server deltas returned.
+* Ensure idempotency by including `uuid` and `updated_at` in every upsert.
+* Reconnect with exponential back-off (tenacity); never block the GUI thread.
+
+---
+
+## API / FastAPI
+
+* Prefix routes with `/v1`; document automatically (OpenAPI).
+* Secure with JWT bearer tokens; roles `operator`, `admin`.
+* Validate all payloads with **pydantic v2** models in `strict` mode.
+* Return structured errors (`HTTPException`) with clear `detail`.
+
+---
+
+## Error Handling & Validation
+
+* Raise custom `BallotError` subclasses for domain errors; surface to users via Qt `MessageDialog`.
+* Log with **loguru**; never log PII at DEBUG.
+* Guard every network call in `try/except`; retry idempotent requests only.
+
+---
+
+## Testing
+
+* Unit-test DAO & sync with **pytest** (in-memory SQLite).
+* GUI smoke tests with **pytest-qt** and `qtbot`.
+* Require ≥ 90 % coverage; fail CI otherwise.
+* Type-check with `mypy --strict` on every pull request.
+
+---
+
+## Packaging & CI/CD
+
+* Manage dependencies with **Poetry**; lock file committed.
+* Build single-file EXE via **PyInstaller**; include QML via `--add-data`.
+* Sign artefacts with an EV cert; distribute updates with **PyUpdater**.
+* GitHub Actions pipeline: lint → type-check → tests → build.
+
+---
+
+## Internationalisation (i18n)
+
+* Wrap all user-visible strings in `qsTr()` (QML) or `self.tr()` (Python).
+* Maintain `.ts` files in `i18n/`; compile to `.qm` in the build step.
+* Support both Eastern (١٢٣) and Western (123) numerals via settings.
+
+---
+
+## Performance Optimisation
+
+* Index critical columns (`pen_id`, `has_voted`, `updated_at`).
+* Batch DB writes and sync payloads (max 500 rows/request).
+* Off-load long tasks (e.g., report generation) to a worker thread.
+* Profile regularly with `cProfile` and Qt Quick profiler.
+
+---
+
+## Key Conventions
+
+1. **No business logic in QML** – keep it in Python controllers.
+2. **Never block the UI thread** – use async or background threads.
+3. **One responsibility per module** – UI, controller, DAO, sync, API.
+4. **Absolute imports**; `from __future__ import annotations` at top of every file.
+5. **Document everything** – Google-style docstrings with examples and typing.
+
+Refer to the official documentation for **PySide 6**, **SQLModel**, and **FastAPI** when in doubt.
+
